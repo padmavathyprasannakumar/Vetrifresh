@@ -224,8 +224,8 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Important: keep this for django-cloudinary-storage compatibility.
-# Do not use STORAGES here while using django-cloudinary-storage 0.3.0.
+# Important for django-cloudinary-storage 0.3.0 compatibility.
+# Do not remove this.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
@@ -242,7 +242,7 @@ USE_CLOUDINARY = bool(
     and CLOUDINARY_API_SECRET
 )
 
-# Remove CLOUDINARY_URL at runtime so old/wrong Render values cannot override
+# Delete CLOUDINARY_URL at runtime so old/wrong Render values cannot override
 # CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.
 if USE_CLOUDINARY:
     os.environ.pop("CLOUDINARY_URL", None)
@@ -420,8 +420,10 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = env_int(
 
 
 # =========================
-# EMAIL SETTINGS - BREVO SMTP/API READY
+# EMAIL SETTINGS - BREVO SMTP + BREVO API READY
 # =========================
+# SMTP is kept for compatibility, but for Render Free you should use Brevo API
+# in views.py because SMTP ports can be blocked.
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",
     "django.core.mail.backends.smtp.EmailBackend",
@@ -429,42 +431,45 @@ EMAIL_BACKEND = os.getenv(
 
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp-relay.brevo.com")
 
-EMAIL_PORT = env_int("EMAIL_PORT", 587)
+# Brevo supports 2525. This is better than 587 on some hosts.
+EMAIL_PORT = env_int("EMAIL_PORT", 2525)
 
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
 
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "").strip()
+
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "").strip()
 
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     EMAIL_HOST_USER or "no-reply@vetrifresh.com",
-)
+).strip()
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 CONTACT_RECEIVER_EMAIL = os.getenv(
     "CONTACT_RECEIVER_EMAIL",
     "padmavathyparasanna4@gmail.com",
-)
+).strip()
 
-# For Brevo API contact email sending.
-BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
+# Use this in views.py for Brevo API email sending.
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "").strip()
 
 
 # =========================
 # CASHFREE PAYMENT SETTINGS
 # =========================
-CASHFREE_ENV = os.getenv("CASHFREE_ENV", "sandbox")
+CASHFREE_ENV = os.getenv("CASHFREE_ENV", "sandbox").strip()
 
-CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID", "")
+CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID", "").strip()
 
-CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET", "")
+CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET", "").strip()
 
-CASHFREE_API_VERSION = os.getenv("CASHFREE_API_VERSION", "2025-01-01")
+CASHFREE_API_VERSION = os.getenv("CASHFREE_API_VERSION", "2025-01-01").strip()
 
-CASHFREE_NOTIFY_URL = os.getenv("CASHFREE_NOTIFY_URL", "")
+CASHFREE_NOTIFY_URL = os.getenv("CASHFREE_NOTIFY_URL", "").strip()
 
 if CASHFREE_ENV.lower() == "production":
     CASHFREE_BASE_URL = "https://api.cashfree.com/pg"
@@ -483,7 +488,7 @@ SITE_URL = FRONTEND_URL or BACKEND_URL
 # =========================
 # LOGGING
 # =========================
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").strip()
 
 LOGGING = {
     "version": 1,
