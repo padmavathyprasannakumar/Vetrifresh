@@ -221,20 +221,17 @@ USE_TZ = True
 # STATIC FILES
 # =========================
 STATIC_URL = "/static/"
+
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Important: keep this for django-cloudinary-storage compatibility.
+# Do not use STORAGES here while using django-cloudinary-storage 0.3.0.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # =========================
 # CLOUDINARY / MEDIA FILES
 # =========================
-try:
-    import cloudinary
-except ImportError:
-    cloudinary = None
-
-
 CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
 CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "").strip()
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "").strip()
@@ -245,6 +242,8 @@ USE_CLOUDINARY = bool(
     and CLOUDINARY_API_SECRET
 )
 
+# Remove CLOUDINARY_URL at runtime so old/wrong Render values cannot override
+# CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.
 if USE_CLOUDINARY:
     os.environ.pop("CLOUDINARY_URL", None)
 
@@ -264,6 +263,7 @@ CLOUDINARY_STORAGE = {
 }
 
 MEDIA_URL = "/media/"
+
 MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", BASE_DIR / "media"))
 
 if USE_CLOUDINARY:
@@ -271,6 +271,7 @@ if USE_CLOUDINARY:
 else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
+# With Cloudinary on Render, keep this False.
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", False)
 
 
@@ -342,7 +343,7 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
-    # Keep False on Render unless HTTPS redirect is confirmed working
+    # Keep False on Render unless HTTPS redirect is confirmed working.
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 
     SECURE_HSTS_SECONDS = env_int("SECURE_HSTS_SECONDS", 0)
@@ -448,7 +449,7 @@ CONTACT_RECEIVER_EMAIL = os.getenv(
     "padmavathyparasanna4@gmail.com",
 )
 
-# For Brevo API contact email sending
+# For Brevo API contact email sending.
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 
 
