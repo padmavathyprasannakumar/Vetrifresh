@@ -1,0 +1,255 @@
+/* ================================
+   PRODUCT CARD HOVER DESIGN - compact shop update
+   Smaller product card, smaller hover description and View Cart button
+================================ */
+
+.vf-hover-product-card {
+  background: #ffffff;
+  border: 1px solid #d8d8d8;
+  border-radius: 12px;
+  position: relative;
+  display: block;
+  overflow: hidden;
+  color: #333333;
+  transition: 0.25s ease;
+  min-height: 315px;
+  cursor: pointer;
+}
+
+.vf-hover-product-card:hover {
+  border-color: #00b207;
+  box-shadow: 0 10px 26px rgba(0, 178, 7, 0.15);
+}
+
+.vf-hover-product-card .vf-sale {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 6;
+  background: #df3e3e;
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 7px 10px;
+  border-radius: 5px;
+}
+
+.vf-hover-product-card .vf-product-img {
+  height: 205px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: #ffffff;
+}
+
+.vf-hover-product-card .vf-product-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: 0.25s ease;
+}
+
+.vf-hover-product-card:hover .vf-product-img img {
+  transform: scale(1.035);
+}
+
+.vf-product-actions {
+  position: absolute;
+  top: 28px;
+  right: 18px;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  transform: translateX(12px);
+  pointer-events: none;
+  transition: 0.25s ease;
+}
+
+.vf-hover-product-card:hover .vf-product-actions {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.vf-action-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid #a8a8a8;
+  background: #ffffff;
+  color: #111111;
+  font-size: 16px;
+  display: grid;
+  place-items: center;
+  transition: 0.2s ease;
+}
+
+.vf-action-circle:hover {
+  border-color: #00b207;
+  color: #00b207;
+}
+
+.vf-hover-product-card .vf-rating-badge {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 5;
+  background: #006b32;
+  color: #ffffff;
+  border-radius: 6px;
+  padding: 7px 11px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.vf-hover-description {
+  position: absolute;
+  left: 50%;
+  top: 52%;
+  transform: translate(-50%, -50%) scale(0.95);
+  z-index: 7;
+  width: 58%;
+  max-width: 220px;
+  min-height: 54px;
+  padding: 10px 12px;
+  border: 1.5px solid #ffffff;
+  border-radius: 10px;
+  background: rgba(132, 209, 135, 0.62);
+  color: #000000;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 700;
+  opacity: 0;
+  transition: 0.25s ease;
+  pointer-events: none;
+}
+
+.vf-hover-product-card:hover .vf-hover-description {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.vf-hover-product-card .vf-view-cart {
+  position: absolute;
+  left: 50%;
+  bottom: 12px;
+  transform: translateX(-50%) translateY(12px);
+  z-index: 9;
+  min-width: 152px;
+  height: 45px;
+  border: 2px solid #006b32;
+  border-radius: 10px;
+  background: #00b207;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  opacity: 0;
+  transition: 0.25s ease;
+}
+
+.vf-hover-product-card:hover .vf-view-cart {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.vf-hover-product-card .vf-view-cart b {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #006b32;
+  color: #ffffff;
+  display: grid;
+  place-items: center;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.vf-hover-product-card .vf-product-body {
+  padding: 14px 62px 18px 18px;
+}
+
+.vf-hover-product-card .vf-product-body h3 {
+  font-size: 19px;
+  font-weight: 500;
+  color: #4b4b4b;
+  margin: 0 0 7px;
+  text-transform: capitalize;
+}
+
+.vf-hover-product-card .vf-product-body p {
+  margin: 0 0 7px;
+  font-size: 16px;
+}
+
+.vf-hover-product-card .vf-product-body strong {
+  color: #222222;
+  font-size: 21px;
+  font-weight: 900;
+}
+
+.vf-hover-product-card .vf-product-body del {
+  color: #9d9d9d;
+  margin-left: 7px;
+  font-size: 15px;
+}
+
+.vf-hover-product-card .vf-stars {
+  color: #ff8a00;
+  font-size: 16px;
+  letter-spacing: 1px;
+}
+
+.vf-hover-product-card .vf-stars span {
+  color: #bdbdbd;
+}
+
+.vf-hover-product-card .vf-bag {
+  position: absolute;
+  right: 18px;
+  bottom: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: none;
+  background: #00b207;
+  color: #ffffff;
+  font-size: 20px;
+  display: grid;
+  place-items: center;
+  z-index: 10;
+  transition: 0.2s ease;
+}
+
+.vf-hover-product-card .vf-bag:hover {
+  background: #006b32;
+}
+
+@media (max-width: 900px) {
+  .vf-hover-product-card {
+    min-height: 300px;
+  }
+
+  .vf-hover-product-card .vf-product-img {
+    height: 195px;
+  }
+
+  .vf-hover-description {
+    width: 62%;
+    font-size: 12px;
+  }
+
+  .vf-hover-product-card .vf-view-cart {
+    min-width: 140px;
+    height: 42px;
+    font-size: 14px;
+  }
+}

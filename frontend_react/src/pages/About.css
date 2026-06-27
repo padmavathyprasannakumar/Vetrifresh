@@ -1,0 +1,457 @@
+.vf-about-page {
+  background: #f8fff4;
+  min-height: 100vh;
+  color: #1a1a1a;
+}
+
+.vf-about-container {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+.vf-about-loading {
+  min-height: 360px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 800;
+  color: #007d1f;
+}
+
+.vf-about-hero-banner {
+  min-height: 104px;
+  background: linear-gradient(90deg, rgba(0, 38, 3, 0.9), rgba(0, 38, 3, 0.55));
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+}
+
+.vf-about-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #00b207;
+}
+
+.vf-about-breadcrumb a {
+  color: rgba(255, 255, 255, 0.76);
+  text-decoration: none;
+}
+
+.vf-about-intro,
+.vf-about-trust,
+.vf-about-delivery {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 52px;
+  padding: 70px 0 40px;
+}
+
+.vf-about-intro-text h1,
+.vf-about-trust-content h2,
+.vf-about-delivery-text h2 {
+  margin: 0 0 18px;
+  font-size: clamp(32px, 4vw, 52px);
+  line-height: 1.05;
+  font-weight: 900;
+  color: #151515;
+}
+
+.vf-about-intro-text p,
+.vf-about-trust-content p,
+.vf-about-delivery-text p {
+  margin: 0 0 22px;
+  color: #555;
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+.vf-about-intro-image,
+.vf-about-trust-image,
+.vf-about-delivery-image {
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vf-about-intro-image img,
+.vf-about-trust-image img,
+.vf-about-delivery-image img {
+  width: 100%;
+  max-height: 430px;
+  object-fit: cover;
+  border-radius: 2px;
+}
+
+.vf-about-delivery-image img {
+  object-fit: contain;
+}
+
+.vf-about-image-placeholder {
+  width: 100%;
+  min-height: 300px;
+  border: 2px dashed #b8ddb9;
+  border-radius: 12px;
+  color: #71a874;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2fff1;
+}
+
+.vf-about-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px 30px;
+  margin-top: 28px;
+}
+
+.vf-about-feature {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.vf-about-feature-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #e8f9eb;
+  color: #00b207;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.vf-about-feature h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.vf-about-feature span {
+  color: #777;
+  font-size: 13px;
+}
+
+.vf-about-delivery {
+  padding-top: 50px;
+  background: #ffffff;
+  border-radius: 2px;
+  padding-left: 70px;
+  padding-right: 70px;
+  margin-top: 40px;
+}
+
+.vf-about-delivery-text ul {
+  padding: 0;
+  margin: 0 0 22px;
+  list-style: none;
+}
+
+.vf-about-delivery-text li {
+  position: relative;
+  padding-left: 26px;
+  margin-bottom: 12px;
+  color: #444;
+  font-weight: 600;
+}
+
+.vf-about-delivery-text li::before {
+  content: "✓";
+  position: absolute;
+  left: 0;
+  top: -2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #e9f9eb;
+  color: #00b207;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.vf-about-green-btn {
+  min-width: 130px;
+  height: 44px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: #00b207;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 900;
+  transition: 0.2s ease;
+}
+
+.vf-about-green-btn:hover {
+  background: #008f05;
+  transform: translateY(-1px);
+}
+
+.vf-about-team-section,
+.vf-about-testimonials-section {
+  padding: 80px 0 20px;
+}
+
+.vf-about-section-title {
+  text-align: center;
+  max-width: 620px;
+  margin: 0 auto 36px;
+}
+
+.vf-about-section-title h2,
+.vf-about-testimonial-head h2 {
+  margin: 0 0 10px;
+  font-size: 34px;
+  font-weight: 900;
+}
+
+.vf-about-section-title p {
+  color: #555;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.vf-about-team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 22px;
+}
+
+.vf-about-team-card {
+  background: #fff;
+  border: 1px solid #e7efe6;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 38, 3, 0.05);
+}
+
+.vf-about-team-img {
+  height: 230px;
+  position: relative;
+  background: #edf8ef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.vf-about-team-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vf-about-team-img span {
+  color: #81aa83;
+  font-weight: 800;
+}
+
+.vf-about-team-socials {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+}
+
+.vf-about-team-socials a {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #00b207;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  font-weight: 900;
+}
+
+.vf-about-team-card h3 {
+  margin: 16px 18px 5px;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.vf-about-team-card p {
+  margin: 0 18px 18px;
+  color: #777;
+  font-size: 13px;
+}
+
+.vf-about-testimonial-head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 30px;
+}
+
+.vf-about-testimonial-head div {
+  display: flex;
+  gap: 8px;
+}
+
+.vf-about-testimonial-head button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #dfe7df;
+  background: #fff;
+  cursor: pointer;
+}
+
+.vf-about-testimonial-head button.active {
+  background: #00b207;
+  color: #fff;
+  border-color: #00b207;
+}
+
+.vf-about-testimonial-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.vf-about-testimonial-card {
+  background: #fff;
+  border-radius: 6px;
+  padding: 24px;
+  border: 1px solid #e7efe6;
+}
+
+.vf-about-quote {
+  font-size: 42px;
+  line-height: 1;
+  color: #c9f0ce;
+  font-weight: 900;
+}
+
+.vf-about-testimonial-card p {
+  color: #444;
+  line-height: 1.65;
+  margin: 8px 0 22px;
+}
+
+.vf-about-testimonial-user,
+.vf-about-testimonial-user > div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.vf-about-testimonial-user img,
+.vf-about-testimonial-user > div > span {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #e9f9eb;
+  color: #00b207;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+}
+
+.vf-about-testimonial-user h4 {
+  margin: 0 0 3px;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+.vf-about-testimonial-user small {
+  color: #777;
+}
+
+.vf-about-testimonial-user strong {
+  color: #ff8a00;
+  letter-spacing: 2px;
+}
+
+.vf-about-brands {
+  margin-top: 70px;
+  margin-bottom: 70px;
+  min-height: 100px;
+  padding: 0 24px;
+  background: #d9ffe2;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-items: center;
+  gap: 22px;
+}
+
+.vf-about-brands a {
+  min-height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: rgba(0, 38, 3, 0.35);
+  font-weight: 900;
+  font-style: italic;
+  font-size: 20px;
+}
+
+.vf-about-brands img {
+  max-width: 115px;
+  max-height: 45px;
+  object-fit: contain;
+  opacity: 0.65;
+}
+
+@media (max-width: 980px) {
+  .vf-about-intro,
+  .vf-about-trust,
+  .vf-about-delivery {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .vf-about-team-grid,
+  .vf-about-testimonial-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .vf-about-brands {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .vf-about-container {
+    width: min(100% - 24px, 1180px);
+  }
+
+  .vf-about-feature-grid,
+  .vf-about-team-grid,
+  .vf-about-testimonial-grid,
+  .vf-about-brands {
+    grid-template-columns: 1fr;
+  }
+
+  .vf-about-intro,
+  .vf-about-trust,
+  .vf-about-delivery {
+    gap: 28px;
+    padding-top: 45px;
+  }
+}

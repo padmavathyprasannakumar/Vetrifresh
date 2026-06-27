@@ -1,0 +1,835 @@
+/* =========================================================
+   VetriFresh homepage reference updates
+   - Compact popular category cards
+   - Admin-controlled promo cards without heavy dark overlay
+   - Slightly taller auto wide banner carousel
+   - One-by-one Instagram animations from admin
+========================================================= */
+
+.vf-home-ref .vf-reference-category-section {
+  width: min(1120px, calc(100% - 64px));
+  margin: 42px auto 0;
+}
+
+.vf-home-ref .vf-reference-title {
+  margin-bottom: 18px;
+}
+
+.vf-home-ref .vf-reference-title h2 {
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 800;
+  color: #111111;
+}
+
+.vf-home-ref .vf-reference-title a {
+  font-size: 13px;
+  font-weight: 700;
+  color: #00b207;
+  text-decoration: none;
+}
+
+.vf-home-ref .vf-reference-category-grid {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.vf-home-ref .vf-reference-cat-card {
+  min-height: 92px !important;
+  height: 92px !important;
+  padding: 10px 8px !important;
+  border: 1px solid #e1e7dd !important;
+  border-radius: 3px !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  text-decoration: none !important;
+  transition: border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease !important;
+}
+
+.vf-home-ref .vf-reference-cat-card:hover {
+  border-color: #00b207 !important;
+  transform: translateY(-3px) !important;
+  box-shadow: 0 10px 22px rgba(0, 178, 7, 0.12) !important;
+}
+
+.vf-home-ref .vf-reference-cat-img {
+  width: 76px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vf-home-ref .vf-reference-cat-img img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+  display: block !important;
+}
+
+.vf-home-ref .vf-reference-cat-placeholder {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e6f8e7;
+  color: #00a106;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.vf-home-ref .vf-reference-cat-card h3 {
+  margin: 0 !important;
+  color: #111111 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+/* Promo cards: match uploaded reference and keep style editable in Django admin */
+.vf-home-ref .vf-reference-promo-grid {
+  width: min(1120px, calc(100% - 64px)) !important;
+  margin: 30px auto 0 !important;
+  padding: 14px !important;
+  background: #dff5dc !important;
+  border: 1px solid #c7edc4 !important;
+  border-radius: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.vf-home-ref .vf-reference-promo-card {
+  min-height: 286px !important;
+  height: 286px !important;
+  border-radius: 6px !important;
+  padding: 28px 20px 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  text-align: center !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-decoration: none !important;
+  background: var(--promo-bg, #073b14) !important;
+  color: var(--promo-text, #ffffff) !important;
+  box-shadow: none !important;
+  isolation: isolate !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.vf-home-ref .vf-reference-promo-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 30px rgba(0, 38, 3, 0.16) !important;
+}
+
+.vf-home-ref .vf-reference-promo-card::before {
+  content: none !important;
+}
+
+.vf-home-ref .vf-reference-promo-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  background: rgba(0, 0, 0, var(--promo-overlay-opacity, 0));
+}
+
+.vf-home-ref .vf-reference-promo-content {
+  position: relative !important;
+  z-index: 4 !important;
+  width: 100%;
+}
+
+.vf-home-ref .vf-reference-promo-card p {
+  margin: 0 0 8px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  font-weight: 800 !important;
+}
+
+.vf-home-ref .vf-reference-promo-card h2 {
+  margin: 0 !important;
+  font-size: 29px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+
+.vf-home-ref .vf-reference-promo-card span {
+  display: block !important;
+  margin: 10px 0 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.vf-home-ref .vf-reference-promo-card b {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 118px !important;
+  height: 39px !important;
+  padding: 0 24px !important;
+  margin-top: 16px !important;
+  border-radius: 999px !important;
+  background: var(--promo-button-bg, #ffffff) !important;
+  color: var(--promo-button-text, #00b207) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+}
+
+.vf-home-ref .vf-reference-promo-card img {
+  position: absolute !important;
+  z-index: 1 !important;
+  transition: transform 0.35s ease !important;
+}
+
+.vf-home-ref .vf-reference-promo-card:hover img {
+  transform: scale(1.04);
+}
+
+.vf-home-ref .promo-style-dark {
+  background: linear-gradient(180deg, var(--promo-bg, #073b14) 0%, #06330f 100%) !important;
+  color: var(--promo-text, #ffffff) !important;
+}
+
+.vf-home-ref .promo-style-yellow {
+  background: var(--promo-bg, #ffd400) !important;
+  color: var(--promo-text, #111111) !important;
+}
+
+.vf-home-ref .promo-style-light {
+  background: var(--promo-bg, #f7fff2) !important;
+  color: var(--promo-text, #111111) !important;
+}
+
+.vf-home-ref .promo-style-image {
+  color: var(--promo-text, #ffffff) !important;
+}
+
+.vf-home-ref .promo-image-bottom-cover img,
+.vf-home-ref .promo-image-bottom-contain img {
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: var(--promo-image-height, 52%) !important;
+  object-position: center bottom !important;
+}
+
+.vf-home-ref .promo-image-bottom-cover img {
+  object-fit: cover !important;
+}
+
+.vf-home-ref .promo-image-bottom-contain img {
+  object-fit: contain !important;
+  padding: 0 10px 8px !important;
+}
+
+.vf-home-ref .promo-image-right-contain {
+  align-items: flex-start !important;
+  text-align: left !important;
+  padding-left: 26px !important;
+}
+
+.vf-home-ref .promo-image-right-contain .vf-reference-promo-content {
+  width: 58%;
+}
+
+.vf-home-ref .promo-image-right-contain img {
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 48% !important;
+  height: 86% !important;
+  object-fit: contain !important;
+  object-position: right bottom !important;
+}
+
+.vf-home-ref .promo-image-full-cover img {
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vf-home-ref .promo-image-full-cover .vf-reference-promo-content {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* Wide full banner carousel */
+.vf-home-ref .vf-wide-carousel-auto {
+  width: min(1280px, calc(100% - 64px)) !important;
+  margin: 66px auto 0 !important;
+  border-radius: 10px !important;
+  background: #eefaea !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.vf-home-ref .vf-wide-track {
+  position: relative;
+  height: clamp(300px, 25vw, 360px);
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.vf-home-ref .vf-wide-slide {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: clamp(28px, 4vw, 68px) !important;
+  text-align: left !important;
+  transition: opacity 0.85s ease, visibility 0.85s ease !important;
+}
+
+.vf-home-ref .vf-wide-slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+}
+
+.vf-home-ref .vf-wide-slide::before {
+  background: linear-gradient(90deg, rgba(0, 38, 3, 0.68), rgba(0, 38, 3, 0.28), rgba(0, 38, 3, 0.04)) !important;
+}
+
+.vf-home-ref .vf-wide-slide img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vf-home-ref .vf-wide-content {
+  position: relative !important;
+  z-index: 4 !important;
+  max-width: 620px !important;
+}
+
+.vf-home-ref .vf-wide-content p {
+  background: transparent !important;
+  color: #ffffff !important;
+  padding: 0 !important;
+  margin-bottom: 9px !important;
+  border-radius: 0 !important;
+}
+
+.vf-home-ref .vf-wide-content h2 {
+  color: #ffffff !important;
+  font-size: clamp(34px, 4vw, 58px) !important;
+  line-height: 1.05 !important;
+  text-transform: none !important;
+}
+
+.vf-home-ref .vf-wide-content h3 {
+  color: #d9ffd7 !important;
+  font-size: clamp(18px, 1.6vw, 27px) !important;
+  margin: 8px 0 20px !important;
+}
+
+.vf-home-ref .vf-wide-content span {
+  border-radius: 999px !important;
+  padding: 11px 24px !important;
+  display: inline-flex !important;
+}
+
+.vf-home-ref .vf-carousel-dots {
+  margin-top: 12px !important;
+  text-align: center !important;
+}
+
+/* Instagram one-by-one animations from admin */
+.vf-home-ref .vf-instagram {
+  overflow: hidden;
+}
+
+.vf-home-ref .vf-insta-card {
+  opacity: 0;
+  animation-fill-mode: both;
+  animation-timing-function: ease;
+  will-change: opacity, transform;
+}
+
+.vf-home-ref .insta-animate-fade-up {
+  animation-name: vfInstaFadeUp;
+}
+
+.vf-home-ref .insta-animate-zoom-in {
+  animation-name: vfInstaZoomIn;
+}
+
+.vf-home-ref .insta-animate-slide-left {
+  animation-name: vfInstaSlideLeft;
+}
+
+.vf-home-ref .insta-animate-slide-right {
+  animation-name: vfInstaSlideRight;
+}
+
+.vf-home-ref .insta-animate-flip {
+  animation-name: vfInstaFlip;
+  transform-origin: center;
+}
+
+.vf-home-ref .insta-animate-none {
+  opacity: 1;
+  animation: none !important;
+}
+
+@keyframes vfInstaFadeUp {
+  from { opacity: 0; transform: translateY(22px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes vfInstaZoomIn {
+  from { opacity: 0; transform: scale(0.72); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes vfInstaSlideLeft {
+  from { opacity: 0; transform: translateX(34px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes vfInstaSlideRight {
+  from { opacity: 0; transform: translateX(-34px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes vfInstaFlip {
+  from { opacity: 0; transform: rotateY(80deg) scale(0.88); }
+  to { opacity: 1; transform: rotateY(0deg) scale(1); }
+}
+
+@media (max-width: 991px) {
+  .vf-home-ref .vf-reference-category-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .vf-home-ref .vf-reference-promo-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vf-home-ref .vf-reference-promo-card {
+    height: 300px !important;
+  }
+
+  .vf-home-ref .vf-wide-track {
+    height: 300px;
+  }
+}
+
+@media (max-width: 575px) {
+  .vf-home-ref .vf-reference-category-section,
+  .vf-home-ref .vf-reference-promo-grid,
+  .vf-home-ref .vf-wide-carousel-auto {
+    width: min(100% - 28px, 1120px) !important;
+  }
+
+  .vf-home-ref .vf-reference-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .vf-home-ref .vf-wide-slide {
+    justify-content: center !important;
+    text-align: center !important;
+    padding: 26px !important;
+  }
+
+  .vf-home-ref .vf-wide-slide::before {
+    background: rgba(0, 38, 3, 0.58) !important;
+  }
+}
+/* =========================================================
+   FINAL PROMO CARD FIX - paste this at the VERY BOTTOM
+   Removes unwanted dark-green default block and matches reference promo style
+========================================================= */
+
+/* Promo outer wrapper like uploaded reference image */
+.vf-promo-grid,
+.vf-home-ref .vf-reference-promo-grid {
+  width: min(1120px, calc(100% - 64px)) !important;
+  margin: 30px auto 0 !important;
+  padding: 14px !important;
+  background: #dff5dc !important;
+  border: 1px solid #c7edc4 !important;
+  border-radius: 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+/* Default fallback colours per card; admin CSS variables can override these */
+.vf-promo-card:nth-child(1),
+.vf-home-ref .vf-reference-promo-card:nth-child(1) {
+  --promo-fallback-bg: #063b12;
+  --promo-fallback-text: #ffffff;
+}
+
+.vf-promo-card:nth-child(2),
+.vf-home-ref .vf-reference-promo-card:nth-child(2) {
+  --promo-fallback-bg: #050505;
+  --promo-fallback-text: #ffffff;
+}
+
+.vf-promo-card:nth-child(3),
+.vf-home-ref .vf-reference-promo-card:nth-child(3) {
+  --promo-fallback-bg: #ffd400;
+  --promo-fallback-text: #111111;
+}
+
+/* Card shape and layout */
+.vf-promo-card,
+.vf-promo-card-clean,
+.vf-home-ref .vf-reference-promo-card,
+.vf-home-ref .promo-style-dark,
+.vf-home-ref .promo-style-yellow,
+.vf-home-ref .promo-style-light,
+.vf-home-ref .promo-style-image {
+  width: 100% !important;
+  min-height: 286px !important;
+  height: 286px !important;
+  border-radius: 6px !important;
+  padding: 28px 20px 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  background: var(--promo-bg, var(--promo-fallback-bg, #ffffff)) !important;
+  color: var(--promo-text, var(--promo-fallback-text, #111111)) !important;
+  box-shadow: none !important;
+  isolation: isolate !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+/* Remove the dark-green/black overlay blocks created by older CSS */
+.vf-promo-card::before,
+.vf-promo-card::after,
+.vf-promo-card-clean::before,
+.vf-promo-card-clean::after,
+.vf-home-ref .vf-reference-promo-card::before,
+.vf-home-ref .vf-reference-promo-card::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+.vf-promo-card:hover,
+.vf-home-ref .vf-reference-promo-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 30px rgba(0, 38, 3, 0.16) !important;
+}
+
+/* Keep content above image */
+.vf-promo-card p,
+.vf-promo-card h2,
+.vf-promo-card span,
+.vf-promo-card b,
+.vf-home-ref .vf-reference-promo-content,
+.vf-home-ref .vf-reference-promo-card p,
+.vf-home-ref .vf-reference-promo-card h2,
+.vf-home-ref .vf-reference-promo-card span,
+.vf-home-ref .vf-reference-promo-card b {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+.vf-promo-card p,
+.vf-home-ref .vf-reference-promo-card p {
+  margin: 0 0 8px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  font-weight: 800 !important;
+}
+
+.vf-promo-card h2,
+.vf-home-ref .vf-reference-promo-card h2 {
+  margin: 0 !important;
+  font-size: 29px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+}
+
+.vf-promo-card span,
+.vf-home-ref .vf-reference-promo-card span {
+  display: block !important;
+  margin: 10px 0 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+}
+
+.vf-promo-card b,
+.vf-home-ref .vf-reference-promo-card b {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 118px !important;
+  height: 39px !important;
+  padding: 0 24px !important;
+  margin-top: 16px !important;
+  border-radius: 999px !important;
+  background: var(--promo-button-bg, #ffffff) !important;
+  color: var(--promo-button-text, #00b207) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Image sits at bottom like the reference image, without covering the content */
+.vf-promo-card img,
+.vf-promo-card-clean img,
+.vf-home-ref .vf-reference-promo-card img,
+.vf-home-ref .promo-image-bottom-cover img,
+.vf-home-ref .promo-image-bottom-contain img {
+  position: absolute !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  width: 100% !important;
+  height: var(--promo-image-height, 52%) !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  z-index: 1 !important;
+  padding: 0 !important;
+  transition: transform 0.35s ease !important;
+}
+
+.vf-promo-card:hover img,
+.vf-home-ref .vf-reference-promo-card:hover img {
+  transform: scale(1.04) !important;
+}
+
+/* Optional style classes still work from admin */
+.vf-home-ref .promo-image-bottom-contain img,
+.vf-promo-card.promo-image-bottom-contain img {
+  object-fit: contain !important;
+  padding: 0 10px 8px !important;
+}
+
+.vf-home-ref .promo-image-full-cover img,
+.vf-promo-card.promo-image-full-cover img {
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.vf-home-ref .promo-image-full-cover .vf-reference-promo-content,
+.vf-promo-card.promo-image-full-cover p,
+.vf-promo-card.promo-image-full-cover h2,
+.vf-promo-card.promo-image-full-cover span,
+.vf-promo-card.promo-image-full-cover b {
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+@media (max-width: 991px) {
+  .vf-promo-grid,
+  .vf-home-ref .vf-reference-promo-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vf-promo-card,
+  .vf-promo-card-clean,
+  .vf-home-ref .vf-reference-promo-card {
+    height: 300px !important;
+    min-height: 300px !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .vf-promo-grid,
+  .vf-home-ref .vf-reference-promo-grid {
+    width: min(100% - 28px, 1120px) !important;
+    padding: 10px !important;
+  }
+}
+
+/* =========================================================
+   PROMO CARD FINAL FIX
+   Full image card + remove top color box
+========================================================= */
+
+.vf-promo-grid,
+.vf-home-ref .vf-reference-promo-grid {
+  width: min(1120px, calc(100% - 64px)) !important;
+  margin: 30px auto 0 !important;
+  padding: 14px !important;
+  background: #dff5dc !important;
+  border: 1px solid #c7edc4 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 16px !important;
+}
+
+.vf-promo-card,
+.vf-home-ref .vf-reference-promo-card {
+  height: 286px !important;
+  min-height: 286px !important;
+  border-radius: 6px !important;
+  padding: 28px 20px 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  flex-direction: column !important;
+  text-align: center !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  isolation: isolate !important;
+}
+
+/* Remove old solid top background / overlay */
+.vf-promo-card::before,
+.vf-promo-card::after,
+.vf-home-ref .vf-reference-promo-card::before,
+.vf-home-ref .vf-reference-promo-card::after {
+  content: none !important;
+  display: none !important;
+  background: none !important;
+}
+
+/* Force image to cover complete card */
+.vf-promo-card img,
+.vf-promo-card .vf-promo-full-img,
+.vf-home-ref .vf-reference-promo-card img,
+.vf-home-ref .vf-reference-promo-card .vf-promo-full-img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  object-fit: cover !important;
+  object-position: center center !important;
+  z-index: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  transform: none !important;
+}
+
+/* Text stays above image */
+.vf-reference-promo-content,
+.vf-promo-card p,
+.vf-promo-card h2,
+.vf-promo-card span,
+.vf-promo-card b,
+.vf-home-ref .vf-reference-promo-content,
+.vf-home-ref .vf-reference-promo-card p,
+.vf-home-ref .vf-reference-promo-card h2,
+.vf-home-ref .vf-reference-promo-card span,
+.vf-home-ref .vf-reference-promo-card b {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+.vf-reference-promo-content,
+.vf-home-ref .vf-reference-promo-content {
+  width: 100% !important;
+}
+
+/* Text sizes like reference */
+.vf-promo-card p,
+.vf-home-ref .vf-reference-promo-card p {
+  margin: 0 0 8px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  font-weight: 800 !important;
+  color: var(--promo-text, #ffffff) !important;
+}
+
+.vf-promo-card h2,
+.vf-home-ref .vf-reference-promo-card h2 {
+  margin: 0 !important;
+  font-size: 29px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  color: var(--promo-text, #ffffff) !important;
+}
+
+.vf-promo-card span,
+.vf-home-ref .vf-reference-promo-card span {
+  display: block !important;
+  margin: 10px 0 0 !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: var(--promo-text, #ffffff) !important;
+}
+
+.vf-promo-card b,
+.vf-home-ref .vf-reference-promo-card b {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 118px !important;
+  height: 39px !important;
+  padding: 0 24px !important;
+  margin-top: 16px !important;
+  border-radius: 999px !important;
+  background: var(--promo-button-bg, #ffffff) !important;
+  color: var(--promo-button-text, #00b207) !important;
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Hover */
+.vf-promo-card:hover,
+.vf-home-ref .vf-reference-promo-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 15px 30px rgba(0, 38, 3, 0.16) !important;
+}
+
+.vf-promo-card:hover img,
+.vf-home-ref .vf-reference-promo-card:hover img {
+  transform: scale(1.03) !important;
+}
+
+/* Mobile */
+@media (max-width: 991px) {
+  .vf-promo-grid,
+  .vf-home-ref .vf-reference-promo-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .vf-promo-card,
+  .vf-home-ref .vf-reference-promo-card {
+    height: 300px !important;
+    min-height: 300px !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .vf-promo-grid,
+  .vf-home-ref .vf-reference-promo-grid {
+    width: min(100% - 28px, 1120px) !important;
+    padding: 10px !important;
+  }
+}
+
