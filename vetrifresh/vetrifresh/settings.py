@@ -81,9 +81,6 @@ ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 # APPLICATIONS
 # =========================
 INSTALLED_APPS = [
-    # Cloudinary should load before Django static/media apps
-    "cloudinary_storage",
-
     # Django default apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -96,6 +93,9 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "rest_framework_simplejwt",
+
+    # Cloudinary media storage
+    "cloudinary_storage",
     "cloudinary",
 
     # Custom app
@@ -221,13 +221,20 @@ USE_TZ = True
 # STATIC FILES
 # =========================
 STATIC_URL = "/static/"
-
 STATIC_ROOT = BASE_DIR / "staticfiles"
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # =========================
 # CLOUDINARY / MEDIA FILES
 # =========================
+try:
+    import cloudinary
+except ImportError:
+    cloudinary = None
+
+
 CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
 CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "").strip()
 CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "").strip()
@@ -238,9 +245,6 @@ USE_CLOUDINARY = bool(
     and CLOUDINARY_API_SECRET
 )
 
-# Important:
-# If CLOUDINARY_URL exists with old/wrong values, it can cause upload errors.
-# This forces Django/Cloudinary to use the 3 Render variables above.
 if USE_CLOUDINARY:
     os.environ.pop("CLOUDINARY_URL", None)
 
@@ -263,31 +267,10 @@ MEDIA_URL = "/media/"
 MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", BASE_DIR / "media"))
 
 if USE_CLOUDINARY:
-    STORAGES = {
-        "default": {
-            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
-
     DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
-
 else:
-    STORAGES = {
-        "default": {
-            "BACKEND": "django.core.files.storage.FileSystemStorage",
-        },
-        "staticfiles": {
-            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-        },
-    }
-
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
-
-# With Cloudinary on Render, keep this False
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", False)
 
 
