@@ -12,6 +12,11 @@ try:
 except ImportError:
     dj_database_url = None
 
+try:
+    import cloudinary
+except ImportError:
+    cloudinary = None
+
 
 # =========================
 # BASE DIRECTORY
@@ -23,7 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # HELPER FUNCTIONS
 # =========================
 def env_bool(name, default=False):
-    return os.getenv(name, str(default)).lower() in ("true", "1", "yes", "on")
+    return os.getenv(name, str(default)).strip().lower() in (
+        "true",
+        "1",
+        "yes",
+        "on",
+    )
 
 
 def env_list(name, default=None):
@@ -59,7 +69,7 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
-RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
@@ -71,6 +81,9 @@ ALLOWED_HOSTS = list(dict.fromkeys(ALLOWED_HOSTS))
 # APPLICATIONS
 # =========================
 INSTALLED_APPS = [
+    # Cloudinary should load before Django static/media apps
+    "cloudinary_storage",
+
     # Django default apps
     "django.contrib.admin",
     "django.contrib.auth",
@@ -83,9 +96,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "corsheaders",
     "rest_framework_simplejwt",
-
-    # Cloudinary media storage
-    "cloudinary_storage",
     "cloudinary",
 
     # Custom app
@@ -107,7 +117,7 @@ MIDDLEWARE = [
 
     "django.middleware.security.SecurityMiddleware",
 
-    # Required for static files on Render
+    # Static files on Render
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -151,6 +161,8 @@ TEMPLATES = [
 # =========================
 # DATABASE
 # =========================
+# Local: SQLite
+# Render: PostgreSQL using DATABASE_URL
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -158,7 +170,7 @@ DATABASES = {
     }
 }
 
-DATABASE_URL = os.getenv("DATABASE_URL", "")
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 if DATABASE_URL and dj_database_url:
     DATABASES["default"] = dj_database_url.parse(
@@ -216,24 +228,39 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # =========================
 # CLOUDINARY / MEDIA FILES
 # =========================
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "").strip()
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "").strip()
+
+USE_CLOUDINARY = bool(
+    CLOUDINARY_CLOUD_NAME
+    and CLOUDINARY_API_KEY
+    and CLOUDINARY_API_SECRET
+)
+
+# Important:
+# If CLOUDINARY_URL exists with old/wrong values, it can cause upload errors.
+# This forces Django/Cloudinary to use the 3 Render variables above.
+if USE_CLOUDINARY:
+    os.environ.pop("CLOUDINARY_URL", None)
+
+    if cloudinary:
+        cloudinary.config(
+            cloud_name=CLOUDINARY_CLOUD_NAME,
+            api_key=CLOUDINARY_API_KEY,
+            api_secret=CLOUDINARY_API_SECRET,
+            secure=True,
+        )
+
 CLOUDINARY_STORAGE = {
-    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", ""),
-    "API_KEY": os.getenv("CLOUDINARY_API_KEY", ""),
-    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET", ""),
+    "CLOUD_NAME": CLOUDINARY_CLOUD_NAME,
+    "API_KEY": CLOUDINARY_API_KEY,
+    "API_SECRET": CLOUDINARY_API_SECRET,
     "SECURE": True,
 }
 
 MEDIA_URL = "/media/"
-
 MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", BASE_DIR / "media"))
-
-# When Cloudinary is enabled, uploaded admin images go to Cloudinary.
-# For local development without Cloudinary env variables, Django can still use local media fallback.
-USE_CLOUDINARY = bool(
-    os.getenv("CLOUDINARY_CLOUD_NAME")
-    and os.getenv("CLOUDINARY_API_KEY")
-    and os.getenv("CLOUDINARY_API_SECRET")
-)
 
 if USE_CLOUDINARY:
     STORAGES = {
@@ -244,6 +271,9 @@ if USE_CLOUDINARY:
             "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
         },
     }
+
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+
 else:
     STORAGES = {
         "default": {
@@ -254,8 +284,10 @@ else:
         },
     }
 
-# Only needed for local media serving or temporary Render media serving.
-# With Cloudinary, keep this False on Render.
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+
+# With Cloudinary on Render, keep this False
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", False)
 
 
@@ -277,7 +309,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "").rstrip("/")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
 if FRONTEND_URL:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
@@ -327,6 +359,7 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
+    # Keep False on Render unless HTTPS redirect is confirmed working
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 
     SECURE_HSTS_SECONDS = env_int("SECURE_HSTS_SECONDS", 0)
@@ -432,7 +465,7 @@ CONTACT_RECEIVER_EMAIL = os.getenv(
     "padmavathyparasanna4@gmail.com",
 )
 
-# Use this if you send contact emails through Brevo API instead of SMTP.
+# For Brevo API contact email sending
 BREVO_API_KEY = os.getenv("BREVO_API_KEY", "")
 
 
@@ -458,7 +491,7 @@ else:
 # =========================
 # FRONTEND / BACKEND URLS
 # =========================
-BACKEND_URL = os.getenv("BACKEND_URL", "").rstrip("/")
+BACKEND_URL = os.getenv("BACKEND_URL", "").strip().rstrip("/")
 
 SITE_URL = FRONTEND_URL or BACKEND_URL
 
