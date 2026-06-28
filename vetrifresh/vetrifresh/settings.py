@@ -1,6 +1,6 @@
 """
 Django settings for vetrifresh project.
-Render + PostgreSQL + Brevo SMTP + Cashfree + timeout ready.
+Render + PostgreSQL + Cloudinary + Brevo + Cashfree + timeout ready.
 """
 
 from pathlib import Path
@@ -11,6 +11,11 @@ try:
     import dj_database_url
 except ImportError:
     dj_database_url = None
+
+try:
+    import cloudinary
+except ImportError:
+    cloudinary = None
 
 
 # =========================
@@ -23,7 +28,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # HELPER FUNCTIONS
 # =========================
 def env_bool(name, default=False):
-    return os.getenv(name, str(default)).lower() in ("true", "1", "yes", "on")
+    return os.getenv(name, str(default)).strip().lower() in (
+        "true",
+        "1",
+        "yes",
+        "on",
+    )
 
 
 def env_list(name, default=None):
@@ -59,7 +69,7 @@ ALLOWED_HOSTS = [
     "localhost",
 ]
 
-RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME")
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
@@ -84,6 +94,10 @@ INSTALLED_APPS = [
     "corsheaders",
     "rest_framework_simplejwt",
 
+    # Cloudinary media storage
+    "cloudinary_storage",
+    "cloudinary",
+
     # Custom app
     "core",
 ]
@@ -103,7 +117,7 @@ MIDDLEWARE = [
 
     "django.middleware.security.SecurityMiddleware",
 
-    # Required for static files on Render
+    # Static files on Render
     "whitenoise.middleware.WhiteNoiseMiddleware",
 
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -147,8 +161,8 @@ TEMPLATES = [
 # =========================
 # DATABASE
 # =========================
-# Local development uses SQLite.
-# Render deployment should use PostgreSQL DATABASE_URL.
+# Local: SQLite
+# Render: PostgreSQL using DATABASE_URL
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -156,7 +170,7 @@ DATABASES = {
     }
 }
 
-DATABASE_URL = os.getenv("DATABASE_URL", "")
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
 if DATABASE_URL and dj_database_url:
     DATABASES["default"] = dj_database_url.parse(
@@ -165,7 +179,6 @@ if DATABASE_URL and dj_database_url:
         ssl_require=not DEBUG,
     )
 
-    # PostgreSQL connection timeout
     DATABASES["default"].setdefault("OPTIONS", {})
     DATABASES["default"]["OPTIONS"]["connect_timeout"] = env_int(
         "DB_CONNECT_TIMEOUT",
@@ -211,18 +224,54 @@ STATIC_URL = "/static/"
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# Important for django-cloudinary-storage 0.3.0 compatibility.
+# Do not remove this.
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 
 # =========================
-# MEDIA FILES
+# CLOUDINARY / MEDIA FILES
 # =========================
+CLOUDINARY_CLOUD_NAME = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
+CLOUDINARY_API_KEY = os.getenv("CLOUDINARY_API_KEY", "").strip()
+CLOUDINARY_API_SECRET = os.getenv("CLOUDINARY_API_SECRET", "").strip()
+
+USE_CLOUDINARY = bool(
+    CLOUDINARY_CLOUD_NAME
+    and CLOUDINARY_API_KEY
+    and CLOUDINARY_API_SECRET
+)
+
+# Delete CLOUDINARY_URL at runtime so old/wrong Render values cannot override
+# CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, and CLOUDINARY_API_SECRET.
+if USE_CLOUDINARY:
+    os.environ.pop("CLOUDINARY_URL", None)
+
+    if cloudinary:
+        cloudinary.config(
+            cloud_name=CLOUDINARY_CLOUD_NAME,
+            api_key=CLOUDINARY_API_KEY,
+            api_secret=CLOUDINARY_API_SECRET,
+            secure=True,
+        )
+
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": CLOUDINARY_CLOUD_NAME,
+    "API_KEY": CLOUDINARY_API_KEY,
+    "API_SECRET": CLOUDINARY_API_SECRET,
+    "SECURE": True,
+}
+
 MEDIA_URL = "/media/"
 
 MEDIA_ROOT = Path(os.getenv("MEDIA_ROOT", BASE_DIR / "media"))
 
-# If True, your urls.py should serve media files in production.
-# For permanent production image storage, Cloudinary/S3 is better.
+if USE_CLOUDINARY:
+    DEFAULT_FILE_STORAGE = "cloudinary_storage.storage.MediaCloudinaryStorage"
+else:
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+# With Cloudinary on Render, keep this False.
 SERVE_MEDIA_FILES = env_bool("SERVE_MEDIA_FILES", False)
 
 
@@ -244,7 +293,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
 
-FRONTEND_URL = os.getenv("FRONTEND_URL", "").rstrip("/")
+FRONTEND_URL = os.getenv("FRONTEND_URL", "").strip().rstrip("/")
 if FRONTEND_URL:
     CORS_ALLOWED_ORIGINS.append(FRONTEND_URL)
 
@@ -294,10 +343,9 @@ if not DEBUG:
     SECURE_CONTENT_TYPE_NOSNIFF = True
     X_FRAME_OPTIONS = "DENY"
 
-    # Keep False on Render unless you are sure HTTPS redirect works correctly.
+    # Keep False on Render unless HTTPS redirect is confirmed working.
     SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 
-    # Optional HSTS. Enable later after confirming HTTPS works.
     SECURE_HSTS_SECONDS = env_int("SECURE_HSTS_SECONDS", 0)
     SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool(
         "SECURE_HSTS_INCLUDE_SUBDOMAINS",
@@ -341,21 +389,14 @@ SIMPLE_JWT = {
 # =========================
 # TIMEOUT SETTINGS
 # =========================
-# Email timeout for Brevo/Gmail SMTP
 EMAIL_TIMEOUT = env_int("EMAIL_TIMEOUT", 30)
 
-# Cashfree API request timeout.
-# Your Cashfree views should use this value:
-# requests.post(..., timeout=settings.CASHFREE_REQUEST_TIMEOUT)
 CASHFREE_REQUEST_TIMEOUT = env_int("CASHFREE_REQUEST_TIMEOUT", 30)
 
-# General external API timeout if needed
 EXTERNAL_API_TIMEOUT = env_int("EXTERNAL_API_TIMEOUT", 30)
 
-# Session timeout: 7 days
 SESSION_COOKIE_AGE = env_int("SESSION_COOKIE_AGE", 60 * 60 * 24 * 7)
 
-# Password reset link timeout: 1 hour
 PASSWORD_RESET_TIMEOUT = env_int("PASSWORD_RESET_TIMEOUT", 60 * 60)
 
 
@@ -379,56 +420,57 @@ DATA_UPLOAD_MAX_NUMBER_FIELDS = env_int(
 
 
 # =========================
-# EMAIL SETTINGS - BREVO SMTP READY
+# EMAIL SETTINGS - BREVO SMTP + BREVO API READY
 # =========================
+# SMTP is kept for compatibility, but for Render Free you should use Brevo API
+# in views.py because SMTP ports can be blocked.
 EMAIL_BACKEND = os.getenv(
     "EMAIL_BACKEND",
     "django.core.mail.backends.smtp.EmailBackend",
 )
 
-# Brevo SMTP
 EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp-relay.brevo.com")
 
-EMAIL_PORT = env_int("EMAIL_PORT", 587)
+# Brevo supports 2525. This is better than 587 on some hosts.
+EMAIL_PORT = env_int("EMAIL_PORT", 2525)
 
 EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
 
-# Brevo SMTP Login
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_USE_SSL = env_bool("EMAIL_USE_SSL", False)
 
-# Brevo SMTP Key, not normal Gmail password and not Brevo API key
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "").strip()
 
-# Must be verified sender email in Brevo
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "").strip()
+
 DEFAULT_FROM_EMAIL = os.getenv(
     "DEFAULT_FROM_EMAIL",
     EMAIL_HOST_USER or "no-reply@vetrifresh.com",
-)
+).strip()
 
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 CONTACT_RECEIVER_EMAIL = os.getenv(
     "CONTACT_RECEIVER_EMAIL",
     "padmavathyparasanna4@gmail.com",
-)
+).strip()
+
+# Use this in views.py for Brevo API email sending.
+BREVO_API_KEY = os.getenv("BREVO_API_KEY", "").strip()
 
 
 # =========================
 # CASHFREE PAYMENT SETTINGS
 # =========================
-# Keep real keys only in Render Environment Variables.
-CASHFREE_ENV = os.getenv("CASHFREE_ENV", "sandbox")  # sandbox or production
+CASHFREE_ENV = os.getenv("CASHFREE_ENV", "sandbox").strip()
 
-CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID", "")
+CASHFREE_CLIENT_ID = os.getenv("CASHFREE_CLIENT_ID", "").strip()
 
-CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET", "")
+CASHFREE_CLIENT_SECRET = os.getenv("CASHFREE_CLIENT_SECRET", "").strip()
 
-CASHFREE_API_VERSION = os.getenv("CASHFREE_API_VERSION", "2025-01-01")
+CASHFREE_API_VERSION = os.getenv("CASHFREE_API_VERSION", "2025-01-01").strip()
 
-CASHFREE_NOTIFY_URL = os.getenv("CASHFREE_NOTIFY_URL", "")
+CASHFREE_NOTIFY_URL = os.getenv("CASHFREE_NOTIFY_URL", "").strip()
 
-
-# Cashfree base URL
 if CASHFREE_ENV.lower() == "production":
     CASHFREE_BASE_URL = "https://api.cashfree.com/pg"
 else:
@@ -438,7 +480,7 @@ else:
 # =========================
 # FRONTEND / BACKEND URLS
 # =========================
-BACKEND_URL = os.getenv("BACKEND_URL", "").rstrip("/")
+BACKEND_URL = os.getenv("BACKEND_URL", "").strip().rstrip("/")
 
 SITE_URL = FRONTEND_URL or BACKEND_URL
 
@@ -446,7 +488,7 @@ SITE_URL = FRONTEND_URL or BACKEND_URL
 # =========================
 # LOGGING
 # =========================
-LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
+LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").strip()
 
 LOGGING = {
     "version": 1,

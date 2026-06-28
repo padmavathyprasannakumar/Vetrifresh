@@ -1,13 +1,66 @@
 import axios from "axios";
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000/api";
+
+export const BACKEND_BASE_URL = API_BASE_URL.replace(/\/api\/?$/, "");
+
+export const getMediaUrl = (url) => {
+  if (!url) return "";
+
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+
+  if (url.startsWith("/media/")) {
+    return `${BACKEND_BASE_URL}${url}`;
+  }
+
+  if (url.startsWith("media/")) {
+    return `${BACKEND_BASE_URL}/${url}`;
+  }
+
+  return url;
+};
+
 const api = axios.create({
-  baseURL: "http://127.0.0.1:8000/api",
+  baseURL: API_BASE_URL,
+  timeout: 30000,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+api.interceptors.request.use(
+  (config) => {
+    const token =
+      localStorage.getItem("access_token") ||
+      localStorage.getItem("access");
 
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    console.error("API Error:", {
+      baseURL: API_BASE_URL,
+      url: error?.config?.url,
+      method: error?.config?.method,
+      status: error?.response?.status,
+      data: error?.response?.data,
+      message: error?.message,
+    });
+
+    return Promise.reject(error);
+  }
+);
+
+export { API_BASE_URL };
 export default api;

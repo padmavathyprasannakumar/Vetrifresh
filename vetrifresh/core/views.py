@@ -3,6 +3,8 @@ from decimal import Decimal
 from django.conf import settings
 from django.core.mail import send_mail
 from django.utils import timezone
+from django.utils.html import escape
+import requests
 import json
 import uuid
 from urllib import request as urllib_request
@@ -876,6 +878,82 @@ class ContactPageAPIView(APIView):
         })
 
 
+def send_contact_email_via_brevo(message_obj, recipient_email, subject_prefix):
+    """
+    Send contact form email using Brevo Transactional Email API.
+    This works better on Render Free than SMTP because it uses HTTPS.
+    """
+    api_key = getattr(settings, "BREVO_API_KEY", "").strip()
+
+    if not api_key:
+        return False, "BREVO_API_KEY missing in Render environment."
+
+    sender_email = (
+        getattr(settings, "DEFAULT_FROM_EMAIL", "").strip()
+        or getattr(settings, "EMAIL_HOST_USER", "").strip()
+        or recipient_email
+    )
+
+    subject = f"{subject_prefix} - {message_obj.name}"
+
+    html_content = f"""
+        <h2>New Contact Message from VetriFresh Website</h2>
+        <p><strong>Name:</strong> {escape(message_obj.name)}</p>
+        <p><strong>Email:</strong> {escape(message_obj.email)}</p>
+        <p><strong>Phone:</strong> {escape(message_obj.phone or 'Not provided')}</p>
+        <p><strong>Message:</strong></p>
+        <p>{escape(message_obj.message).replace(chr(10), '<br>')}</p>
+    """
+
+    text_content = (
+        "New contact message from VetriFresh website\n\n"
+        f"Name: {message_obj.name}\n"
+        f"Email: {message_obj.email}\n"
+        f"Phone: {message_obj.phone or 'Not provided'}\n\n"
+        f"Message:\n{message_obj.message}\n"
+    )
+
+    payload = {
+        "sender": {
+            "name": "VetriFresh",
+            "email": sender_email,
+        },
+        "to": [
+            {
+                "email": recipient_email,
+                "name": "VetriFresh Admin",
+            }
+        ],
+        "replyTo": {
+            "email": message_obj.email,
+            "name": message_obj.name,
+        },
+        "subject": subject,
+        "htmlContent": html_content,
+        "textContent": text_content,
+    }
+
+    try:
+        response = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={
+                "accept": "application/json",
+                "api-key": api_key,
+                "content-type": "application/json",
+            },
+            json=payload,
+            timeout=getattr(settings, "EMAIL_TIMEOUT", 30),
+        )
+
+        if response.status_code in (200, 201, 202):
+            return True, "Email sent successfully."
+
+        return False, response.text
+
+    except Exception as exc:
+        return False, str(exc)
+
+
 class ContactSubmitAPIView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -898,42 +976,24 @@ class ContactSubmitAPIView(APIView):
             settings,
             "CONTACT_RECEIVER_EMAIL",
             "padmavathyparasanna4@gmail.com"
-        )
+        ).strip()
 
         recipient_email = default_recipient_email
         subject_prefix = "VetriFresh Contact Message"
         success_message = "Message sent successfully."
 
         if form_setting:
-            recipient_email = form_setting.recipient_email or recipient_email
+            recipient_email = (form_setting.recipient_email or recipient_email).strip()
             subject_prefix = form_setting.email_subject_prefix or subject_prefix
             success_message = form_setting.success_message or success_message
 
-        from_email = (
-            getattr(settings, "DEFAULT_FROM_EMAIL", "")
-            or getattr(settings, "EMAIL_HOST_USER", "")
-            or default_recipient_email
+        sent, email_error = send_contact_email_via_brevo(
+            message_obj=message_obj,
+            recipient_email=recipient_email,
+            subject_prefix=subject_prefix,
         )
 
-        subject = f"{subject_prefix} - {message_obj.name}"
-
-        body = (
-            "New contact message from VetriFresh website\n\n"
-            f"Name: {message_obj.name}\n"
-            f"Email: {message_obj.email}\n"
-            f"Phone: {message_obj.phone or 'Not provided'}\n\n"
-            f"Message:\n{message_obj.message}\n"
-        )
-
-        try:
-            send_mail(
-                subject=subject,
-                message=body,
-                from_email=from_email,
-                recipient_list=[recipient_email],
-                fail_silently=False,
-            )
-
+        if sent:
             message_obj.email_sent = True
             message_obj.email_error = ""
             message_obj.save(update_fields=[
@@ -947,24 +1007,21 @@ class ContactSubmitAPIView(APIView):
                 "email_sent": True,
             }, status=status.HTTP_201_CREATED)
 
-        except Exception as exc:
-            message_obj.email_sent = False
-            message_obj.email_error = str(exc)
-            message_obj.save(update_fields=[
-                "email_sent",
-                "email_error",
-                "updated_at",
-            ])
+        message_obj.email_sent = False
+        message_obj.email_error = email_error
+        message_obj.save(update_fields=[
+            "email_sent",
+            "email_error",
+            "updated_at",
+        ])
 
-            return Response({
-                "message": (
-                    "Message saved, but email was not sent. "
-                    "Please check SMTP environment variables."
-                ),
-                "email_sent": False,
-                "email_error": str(exc),
-            }, status=status.HTTP_202_ACCEPTED)
-
+        # Message is saved successfully, so return 201 instead of 500.
+        # The frontend can show this exact message instead of generic error.
+        return Response({
+            "message": "Message saved, but email was not sent. Please check Brevo API settings.",
+            "email_sent": False,
+            "email_error": email_error,
+        }, status=status.HTTP_201_CREATED)
 
 # -----------------------------
 # ABOUT PAGE API

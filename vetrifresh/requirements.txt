@@ -1,4 +1,4 @@
-Django
+Django>=4.2.16,<5.0
 djangorestframework
 django-cors-headers
 djangorestframework-simplejwt
@@ -8,3 +8,5 @@ gunicorn
 whitenoise
 dj-database-url
 psycopg2-binary
+cloudinary
+django-cloudinary-storage
